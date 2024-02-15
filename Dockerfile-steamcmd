@@ -1,0 +1,24 @@
+FROM ubuntu:22.04
+
+# based on
+#   sigboe/SteamCMD
+#   https://developer.valvesoftware.com/wiki/SteamCMD#Manually
+
+# create user for steam
+RUN adduser \
+	--home /home/steamuser \
+	--disabled-password \
+	--shell /bin/bash \
+	--gecos "user for running steam" \
+	--quiet \
+	steamuser
+
+# install dependencies
+RUN apt-get update
+RUN apt-get install -y curl lib32gcc-s1
+
+# Downloading SteamCMD and make the Steam directory owned by the steam user
+RUN mkdir -p /opt/steamcmd &&\
+    cd /opt/steamcmd &&\
+    curl -s https://steamcdn-a.akamaihd.net/client/installer/steamcmd_linux.tar.gz | tar -vxz &&\
+    chown -R steamuser:steamuser /opt/steamcmd
